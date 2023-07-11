@@ -1,20 +1,19 @@
 import Link from "next/link";
-import {useUser} from "@auth0/nextjs-auth0/client";
+import { useUser } from "@auth0/nextjs-auth0/client";
 import Image from "next/image";
-
+import HeroImage from "../public/hero.webp";
+import { Logo } from "../components/logo";
 export default function Home() {
-  const {user} = useUser();
-  console.log(user);
-  return (<div>
-    <h1>This is the home page</h1>
-    {user ? (
-      <>
-      <div>
-        <Image src={user.picture} alt={"username"} height={50} width={50}/>
-        </div>
-        <Link href={"/api/auth/logout"}>Logout</Link>
-     
-      </>) : (<Link href={"/api/auth/login"}>Login</Link>)}
-    
-  </div>);
+  return (
+    <div className="w-screen h-screen overflow-hidden flex justify-center items-center relative">
+      <Image src={HeroImage} alt="Hero" fill className="absolute"></Image>
+      <div className="relative z-10 text-white px-10 py-5 text-center max-w-screen-sm bg-slate-900/90 rounded-md backdrop-blur-sm">
+        <Logo></Logo>
+        <p>This is an AI powered solution</p>
+        <Link href={"/post/new"} className="btn">
+          Begin
+        </Link>
+      </div>
+    </div>
+  );
 }
