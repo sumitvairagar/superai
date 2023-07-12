@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { useUser } from "@auth0/nextjs-auth0/client";
 import Image from "next/image";
 import HeroImage from "../public/hero.webp";
 import { Logo } from "../components/logo";
