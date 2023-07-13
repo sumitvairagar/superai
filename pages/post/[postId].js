@@ -4,9 +4,10 @@ import clientPromise from "../../lib/mongodb";
 import { ObjectId } from "mongodb";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHashtag } from "@fortawesome/free-solid-svg-icons";
+import { getAppProps } from "../../utils/getAppProps";
 
 export default function Post(props) {
-  console.log(props);
+  console.log("Props in Post PagE: ", props);
   return (
     <div className="overflow-auto h-full">
       <div className="max-w-screen-sm mx-auto">
@@ -45,6 +46,8 @@ Post.getLayout = function getLayout(page, pageProps) {
 
 export const getServerSideProps = withPageAuthRequired({
   async getServerSideProps(ctx) {
+    const appProps = await getAppProps(ctx);
+
     const userSession = await getSession(ctx.req, ctx.res);
     const client = await clientPromise;
     const db = client.db("SuperAi");
@@ -71,6 +74,7 @@ export const getServerSideProps = withPageAuthRequired({
         title: post.title,
         metaDescription: post.metaDescription,
         keywords: post.keywords,
+        ...appProps,
       },
     };
   },
