@@ -16,6 +16,16 @@ export default withApiAuthRequired(async function generatePost(req, res) {
     return;
   }
   const { topic, keywords } = req.body;
+
+  if (!topic || !keywords) {
+    res.status(422);
+    return;
+  }
+
+  if (topic.length > 80 || keywords.length > 80) {
+    res.status(422);
+    return;
+  }
   /* const { topic, keywords } = req.body;
   //const topic = "Top 10 tips for dog owners";
   //const keywords =

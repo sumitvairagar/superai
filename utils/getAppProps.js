@@ -26,9 +26,6 @@ export const getAppProps = async (ctx) => {
     })
     .toArray();
 
-  console.log("In the server", user);
-  console.log("In the server", posts);
-
   return {
     availableTokens: user.availableTokens,
     posts: posts.map(({ created, _id, userId, ...rest }) => ({
