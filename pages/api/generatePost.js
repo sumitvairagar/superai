@@ -150,7 +150,7 @@ export default withApiAuthRequired(async function generatePost(req, res) {
     topic,
     keywords,
     userId: userProfile._id,
-    created: new Date(),
+    created: new Date().getTime(),
   });
 
   res.status(200).json({

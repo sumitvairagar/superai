@@ -4,14 +4,24 @@ import Image from "next/image";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCoins } from "@fortawesome/free-solid-svg-icons";
 import { Logo } from "../logo";
+import { useContext, useEffect } from "react";
+import PostsContext from "../../context/postsContext";
 
 export default function AppLayout({
   children,
   availableTokens,
-  posts,
+  posts: postsFromSSR,
   selectedPostId,
 }) {
   const { user } = useUser();
+
+  const { setPostsFromSSR, posts, getPosts, noMorePosts } =
+    useContext(PostsContext);
+
+  useEffect(() => {
+    setPostsFromSSR(postsFromSSR);
+  }, [postsFromSSR, setPostsFromSSR]);
+
   console.log("Total Tokens: " + availableTokens);
   return (
     <div className="grid grid-cols-[300px_1fr] h-screen max-h-screen">
@@ -38,6 +48,14 @@ export default function AppLayout({
               {post.topic}
             </Link>
           ))}
+          {!noMorePosts && (
+            <div
+              onClick={() => getPosts(posts[posts.length - 1]?.created)}
+              className="hover:underline text-sm text-slate-400 text-center cursor-pointer mt-4"
+            >
+              Load more {posts[posts.length - 1]?.created}{" "}
+            </div>
+          )}
         </div>
         <div className="bg-cyan-800 flex items-center gap-2 border-t border-t-black/50 h-20 px-2">
           {user ? (
