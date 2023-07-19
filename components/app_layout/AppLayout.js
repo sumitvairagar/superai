@@ -12,6 +12,7 @@ export default function AppLayout({
   availableTokens,
   posts: postsFromSSR,
   selectedPostId,
+  postCreatedTime,
 }) {
   const { user } = useUser();
 
@@ -20,7 +21,19 @@ export default function AppLayout({
 
   useEffect(() => {
     setPostsFromSSR(postsFromSSR);
-  }, [postsFromSSR, setPostsFromSSR]);
+    if (selectedPostId) {
+      const exists = postsFromSSR.find((post) => post._id === selectedPostId);
+      if (!exists) {
+        getPosts(postCreatedTime, true);
+      }
+    }
+  }, [
+    postsFromSSR,
+    setPostsFromSSR,
+    selectedPostId,
+    postCreatedTime,
+    getPosts,
+  ]);
 
   console.log("Total Tokens: " + availableTokens);
   return (
