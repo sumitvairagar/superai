@@ -3,7 +3,7 @@ import { getSession, withApiAuthRequired } from "@auth0/nextjs-auth0";
 import { Configuration, OpenAIApi } from "openai";
 import clientPromise from "../../lib/mongodb";
 
-export default withApiAuthRequired(async function generatePost(req, res) {
+export default withApiAuthRequired(async function generateBook(req, res) {
   const { user } = await getSession(req, res);
   const client = await clientPromise;
   const db = client.db("SuperAi");
@@ -40,37 +40,37 @@ export default withApiAuthRequired(async function generatePost(req, res) {
     model: "text-davinci-003",
     temperature: 0,
     max_tokens: 3600,
-    prompt: `write a long and detailed seo-friendly blog post about ${topic}, that target the following comma-seperate keywords ${keywords}.
+    prompt: `write a long and detailed seo-friendly blog book about ${topic}, that target the following comma-seperate keywords ${keywords}.
     The content should be formatted in seo-friendly HTML.
     The response must also include appropriate title and meta description content.
     The return format must be stringified JSON in the following format:
     {
-        "postContent": post content here
+        "bookContent": book content here
         "title": title goes here
         "metaDescription" meta description goes here
     }
     `,
   }); 
 
-  const postContentResponse = await openai.createChatCompletion({
+  const bookContentResponse = await openai.createChatCompletion({
     model: "gpt-3.5-turbo",
     temperature: 0,
     messages: [
       {
         role: "system",
-        content: "You are a blog post generator",
+        content: "You are a blog book generator",
       },
       {
         role: "user",
-        content: `write a long and detailed seo-friendly blog post about ${topic}, that target the following comma-seperate keywords ${keywords}.
+        content: `write a long and detailed seo-friendly blog book about ${topic}, that target the following comma-seperate keywords ${keywords}.
         The content should be formatted in seo-friendly HTML.
         limited to the following HTML tags: p, h1, h2, h3, h4, h5, h6, strong, li, ol, ul, i.`,
       },
     ],
   });
 
-  const postContent =
-    postContentResponse.data.choices[0].message?.content || "";
+  const bookContent =
+    bookContentResponse.data.choices[0].message?.content || "";
 
   const titleContentResponse = await openai.createChatCompletion({
     model: "gpt-3.5-turbo",
@@ -78,17 +78,17 @@ export default withApiAuthRequired(async function generatePost(req, res) {
     messages: [
       {
         role: "system",
-        content: "You are a blog post generator",
+        content: "You are a blog book generator",
       },
       {
         role: "user",
-        content: `write a long and detailed seo-friendly blog post about ${topic}, that target the following comma-seperate keywords ${keywords}.
+        content: `write a long and detailed seo-friendly blog book about ${topic}, that target the following comma-seperate keywords ${keywords}.
             The content should be formatted in seo-friendly HTML.
             limited to the following HTML tags: p, h1, h2, h3, h4, h5, h6, strong, li, ol, ul, i.`,
       },
       {
         role: "assistant",
-        content: postContent,
+        content: bookContent,
       },
       {
         role: "user",
@@ -103,22 +103,22 @@ export default withApiAuthRequired(async function generatePost(req, res) {
     messages: [
       {
         role: "system",
-        content: "You are a blog post generator",
+        content: "You are a blog book generator",
       },
       {
         role: "user",
-        content: `write a long and detailed seo-friendly blog post about ${topic}, that target the following comma-seperate keywords ${keywords}.
+        content: `write a long and detailed seo-friendly blog book about ${topic}, that target the following comma-seperate keywords ${keywords}.
             The content should be formatted in seo-friendly HTML.
             limited to the following HTML tags: p, h1, h2, h3, h4, h5, h6, strong, li, ol, ul, i.`,
       },
       {
         role: "assistant",
-        content: postContent,
+        content: bookContent,
       },
       {
         role: "user",
         content:
-          "Generate SEO-friendly meta description content for the above blog post",
+          "Generate SEO-friendly meta description content for the above blog book",
       },
     ],
   });
@@ -128,7 +128,7 @@ export default withApiAuthRequired(async function generatePost(req, res) {
     metaDescriptionContentResponse.data.choices[0].message?.content || "";
 
   res.status(200).json({
-    postContent,
+    bookContent,
     title,
     metaDescription,
   });*/
@@ -143,8 +143,8 @@ export default withApiAuthRequired(async function generatePost(req, res) {
     }
   );
 
-  const post = await db.collection("posts").insertOne({
-    postContent: "Dummy Content",
+  const book = await db.collection("books").insertOne({
+    bookContent: "Dummy Content",
     title: "Dummy Title",
     metaDescription: "Dummy Meta Description",
     topic,
@@ -154,6 +154,6 @@ export default withApiAuthRequired(async function generatePost(req, res) {
   });
 
   res.status(200).json({
-    postId: post.insertedId,
+    bookId: book.insertedId,
   });
 });

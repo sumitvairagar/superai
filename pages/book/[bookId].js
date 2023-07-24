@@ -5,29 +5,29 @@ import { ObjectId } from "mongodb";
 import { useRouter } from "next/router";
 import { useContext, useState } from "react";
 import AppLayout from "../../components/app_layout/AppLayout";
-import PostsContext from "../../context/postsContext";
+import BooksContext from "../../context/booksContext";
 import clientPromise from "../../lib/mongodb";
 import { getAppProps } from "../../utils/getAppProps";
 
-export default function Post(props) {
+export default function Book(props) {
   console.log("PROPS: ", props);
   const router = useRouter();
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const { deletePost } = useContext(PostsContext);
+  const { deleteBook } = useContext(BooksContext);
 
   const handleDeleteConfirm = async () => {
     try {
-      const response = await fetch(`/api/deletePost`, {
+      const response = await fetch(`/api/deleteBook`, {
         method: "POST",
         headers: {
           "content-type": "application/json",
         },
-        body: JSON.stringify({ postId: props.id }),
+        body: JSON.stringify({ bookId: props.id }),
       });
       const json = await response.json();
       if (json.success) {
-        deletePost(props.id);
-        router.replace(`/post/new`);
+        deleteBook(props.id);
+        router.replace(`/book/new`);
       }
     } catch (e) {}
   };
@@ -53,10 +53,10 @@ export default function Post(props) {
           ))}
         </div>
         <div className="text-sm font-bold mt-6 p-2 bg-stone-200 rounded-sm">
-          Blog post
+          Blog book
         </div>
         <div
-          dangerouslySetInnerHTML={{ __html: props.postContent || "" }}
+          dangerouslySetInnerHTML={{ __html: props.bookContent || "" }}
         ></div>
         <div className="my-4">
           {!showDeleteConfirm && (
@@ -64,13 +64,13 @@ export default function Post(props) {
               className="btn bg-red-600 hover:bg-red-700"
               onClick={() => setShowDeleteConfirm(true)}
             >
-              Delete post
+              Delete book
             </button>
           )}
           {!!showDeleteConfirm && (
             <div>
               <p className="p-2 bg-red-300 text-center">
-                Are you sure you want to delete this post? This action is
+                Are you sure you want to delete this book? This action is
                 irreversible
               </p>
               <div className="grid grid-cols-2 gap-2">
@@ -95,7 +95,7 @@ export default function Post(props) {
   );
 }
 
-Post.getLayout = function getLayout(page, pageProps) {
+Book.getLayout = function getLayout(page, pageProps) {
   return <AppLayout {...pageProps}>{page}</AppLayout>;
 };
 
@@ -109,15 +109,15 @@ export const getServerSideProps = withPageAuthRequired({
     const user = await db.collection("users").findOne({
       auth0Id: userSession.user.sub,
     });
-    const post = await db.collection("posts").findOne({
-      _id: new ObjectId(ctx.params.postId),
+    const book = await db.collection("books").findOne({
+      _id: new ObjectId(ctx.params.bookId),
       userId: user._id,
     });
 
-    if (!post) {
+    if (!book) {
       return {
         redirect: {
-          destination: "/post/new",
+          destination: "/book/new",
           permanent: false,
         },
       };
@@ -125,12 +125,12 @@ export const getServerSideProps = withPageAuthRequired({
 
     return {
       props: {
-        id: ctx.params.postId,
-        postContent: post.postContent,
-        title: post.title,
-        metaDescription: post.metaDescription,
-        keywords: post.keywords,
-        postCreatedTime: post.created,
+        id: ctx.params.bookId,
+        bookContent: book.bookContent,
+        title: book.title,
+        metaDescription: book.metaDescription,
+        keywords: book.keywords,
+        bookCreatedTime: book.created,
         ...appProps,
       },
     };

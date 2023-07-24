@@ -5,34 +5,34 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCoins } from "@fortawesome/free-solid-svg-icons";
 import { Logo } from "../logo";
 import { useContext, useEffect } from "react";
-import PostsContext from "../../context/postsContext";
+import BooksContext from "../../context/booksContext";
 
 export default function AppLayout({
   children,
   availableTokens,
-  posts: postsFromSSR,
-  selectedPostId,
-  postCreatedTime,
+  books: booksFromSSR,
+  selectedBookId,
+  bookCreatedTime,
 }) {
   const { user } = useUser();
 
-  const { setPostsFromSSR, posts, getPosts, noMorePosts } =
-    useContext(PostsContext);
+  const { setBooksFromSSR, books, getBooks, noMoreBooks } =
+    useContext(BooksContext);
 
   useEffect(() => {
-    setPostsFromSSR(postsFromSSR);
-    if (selectedPostId) {
-      const exists = postsFromSSR.find((post) => post._id === selectedPostId);
+    setBooksFromSSR(booksFromSSR);
+    if (selectedBookId) {
+      const exists = booksFromSSR.find((book) => book._id === selectedBookId);
       if (!exists) {
-        getPosts(postCreatedTime, true);
+        getBooks(bookCreatedTime, true);
       }
     }
   }, [
-    postsFromSSR,
-    setPostsFromSSR,
-    selectedPostId,
-    postCreatedTime,
-    getPosts,
+    booksFromSSR,
+    setBooksFromSSR,
+    selectedBookId,
+    bookCreatedTime,
+    getBooks,
   ]);
 
   console.log("Total Tokens: " + availableTokens);
@@ -41,8 +41,8 @@ export default function AppLayout({
       <div className="flex flex-col text-white overflow-hidden">
         <div className="bg-slate-800 px-2">
           <Logo></Logo>
-          <Link href={"/post/new"} className="btn">
-            New Post
+          <Link href={"/book/new"} className="btn">
+            New Book
           </Link>
           <Link href={"/token-topup"} className="block mt-2 text-center ">
             <FontAwesomeIcon icon={faCoins} className="text-yellow-500" />
@@ -50,23 +50,23 @@ export default function AppLayout({
           </Link>
         </div>
         <div className="px-4 flex-1 overflow-auto bg-gradient-to-b from-slate-800 to-cyan-800">
-          {posts.map((post) => (
+          {books.map((book) => (
             <Link
-              key={post._id}
-              href={`/post/${post._id}`}
+              key={book._id}
+              href={`/book/${book._id}`}
               className={`py-1 border border-white/0 block text-ellipsis overflow-hidden whitespace-nowrap my-1 px-2 bg-white/10 cursor-pointer rounded-sm ${
-                selectedPostId === post._id ? "bg-white/20 border-white" : ""
+                selectedBookId === book._id ? "bg-white/20 border-white" : ""
               }`}
             >
-              {post.topic}
+              {book.topic}
             </Link>
           ))}
-          {!noMorePosts && (
+          {!noMoreBooks && (
             <div
-              onClick={() => getPosts(posts[posts.length - 1]?.created)}
+              onClick={() => getBooks(books[books.length - 1]?.created)}
               className="hover:underline text-sm text-slate-400 text-center cursor-pointer mt-4"
             >
-              Load more {posts[posts.length - 1]?.created}{" "}
+              Load more {books[books.length - 1]?.created}{" "}
             </div>
           )}
         </div>

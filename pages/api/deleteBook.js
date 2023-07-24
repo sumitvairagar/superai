@@ -13,11 +13,11 @@ export default withApiAuthRequired(async function handler(req, res) {
       auth0Id: sub,
     });
 
-    const { postId } = req.body;
+    const { bookId } = req.body;
 
-    await db.collection("posts").deleteOne({
+    await db.collection("books").deleteOne({
       userId: userProfile._id,
-      _id: new ObjectId(postId),
+      _id: new ObjectId(bookId),
     });
 
     res.status(200).json({ success: true });

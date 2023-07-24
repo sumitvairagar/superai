@@ -9,7 +9,7 @@ export default function Home() {
       <div className="relative z-10 text-white px-10 py-5 text-center max-w-screen-sm bg-slate-900/90 rounded-md backdrop-blur-sm">
         <Logo></Logo>
         <p>This is an AI powered solution</p>
-        <Link href={"/post/new"} className="btn">
+        <Link href={"/book/new"} className="btn">
           Begin
         </Link>
       </div>

@@ -6,7 +6,7 @@ import { getAppProps } from "../../utils/getAppProps";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBrain } from "@fortawesome/free-solid-svg-icons";
 
-export default function NewPost(props) {
+export default function NewBook(props) {
   const router = useRouter();
   const [topic, setTopic] = useState("");
   const [keywords, setKeywords] = useState("");
@@ -15,7 +15,7 @@ export default function NewPost(props) {
     setGenerating(true);
     e.preventDefault();
     try {
-      const response = await fetch("/api/generatePost", {
+      const response = await fetch("/api/generateBook", {
         method: "POST",
         headers: {
           "content-type": "application/json",
@@ -23,8 +23,8 @@ export default function NewPost(props) {
         body: JSON.stringify({ topic, keywords }),
       });
       const json = await response.json();
-      if (json?.postId) {
-        router.push(`/post/${json.postId}`);
+      if (json?.bookId) {
+        router.push(`/book/${json.bookId}`);
       }
     } catch (e) {
       setGenerating(false);
@@ -75,7 +75,7 @@ export default function NewPost(props) {
               type="submit"
               disabled={!topic.trim() || !keywords.trim()}
             >
-              Generate Post
+              Generate Book
             </button>
           </form>
         </div>
@@ -84,7 +84,7 @@ export default function NewPost(props) {
   );
 }
 
-NewPost.getLayout = function getLayout(page, pageProps) {
+NewBook.getLayout = function getLayout(page, pageProps) {
   return <AppLayout {...pageProps}>{page}</AppLayout>;
 };
 

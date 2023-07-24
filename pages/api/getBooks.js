@@ -1,7 +1,7 @@
 import { getSession, withApiAuthRequired } from "@auth0/nextjs-auth0";
 import clientPromise from "../../lib/mongodb";
 
-export default withApiAuthRequired(async function getPosts(req, res) {
+export default withApiAuthRequired(async function getBooks(req, res) {
   try {
     const { user } = await getSession(req, res);
     const client = await clientPromise;
@@ -10,22 +10,22 @@ export default withApiAuthRequired(async function getPosts(req, res) {
       .collection("users")
       .findOne({ auth0Id: user.sub });
 
-    const { lastPostDate, getNewerPosts } = req.body;
+    const { lastBookDate, getNewerBooks } = req.body;
 
-    const posts = await db
-      .collection("posts")
+    const books = await db
+      .collection("books")
       .find({
         created: {
-          [getNewerPosts ? "$gte" : "$lt"]: Number(lastPostDate),
+          [getNewerBooks ? "$gte" : "$lt"]: Number(lastBookDate),
         },
         userId: userProfile._id,
       })
-      .limit(getNewerPosts ? 0 : 5)
+      .limit(getNewerBooks ? 0 : 5)
       .sort({ created: -1 })
       .toArray();
 
-    console.log("POST ON SERVER", posts);
-    res.status(200).json({ posts });
+    console.log("POST ON SERVER", books);
+    res.status(200).json({ books });
     return res;
   } catch (e) {
     console.log("ERROR IN GET POST", e);

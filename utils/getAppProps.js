@@ -12,12 +12,12 @@ export const getAppProps = async (ctx) => {
   if (!user) {
     return {
       availableTokens: 0,
-      posts: [],
+      books: [],
     };
   }
 
-  const posts = await db
-    .collection("posts")
+  const books = await db
+    .collection("books")
     .find({
       userId: user._id,
     })
@@ -29,12 +29,12 @@ export const getAppProps = async (ctx) => {
 
   return {
     availableTokens: user.availableTokens,
-    posts: posts.map(({ created, _id, userId, ...rest }) => ({
+    books: books.map(({ created, _id, userId, ...rest }) => ({
       _id: _id.toString(),
       created: created.toString(),
       userId: userId.toString(),
       ...rest,
     })),
-    selectedPostId: ctx.params?.postId || null,
+    selectedBookId: ctx.params?.bookId || null,
   };
 };
