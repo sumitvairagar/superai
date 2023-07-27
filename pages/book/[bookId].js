@@ -31,65 +31,100 @@ export default function Book(props) {
       }
     } catch (e) {}
   };
+
+  // Parse the book content from JSON
+  const bookContent = props.bookContent;
+
   return (
-    <div className="overflow-auto h-full">
-      <div className="max-w-screen-sm mx-auto">
-        <div className="text-sm font-bold mt-6 p-2 bg-stone-200 rounded-sm">
-          SEO Title and meta description
-        </div>
-        <div className="p-4 my-2 border border-stone-200 rounded-md">
-          <div className="text-blue-600 text-2xl font-bold">{props.title}</div>
-          <div className="mt-2">{props.metaDescription}</div>
-        </div>
-        <div className="text-sm font-bold mt-6 p-2 bg-stone-200 rounded-sm">
-          Keywords
-        </div>
-        <div className="flex flex-wrap pt-2 gap-1">
-          {props.keywords.split(",").map((keyword, i) => (
-            <div key={i} className="p-2 rounded-full bg-slate-800 text-white ">
-              <FontAwesomeIcon icon={faHashtag}></FontAwesomeIcon>
-              {keyword}
-            </div>
-          ))}
-        </div>
-        <div className="text-sm font-bold mt-6 p-2 bg-stone-200 rounded-sm">
-          Blog book
-        </div>
-        <div
-          dangerouslySetInnerHTML={{ __html: props.bookContent || "" }}
-        ></div>
-        <div className="my-4">
-          {!showDeleteConfirm && (
-            <button
-              className="btn bg-red-600 hover:bg-red-700"
-              onClick={() => setShowDeleteConfirm(true)}
-            >
-              Delete book
-            </button>
-          )}
-          {!!showDeleteConfirm && (
-            <div>
-              <p className="p-2 bg-red-300 text-center">
-                Are you sure you want to delete this book? This action is
-                irreversible
-              </p>
-              <div className="grid grid-cols-2 gap-2">
-                <button
-                  onClick={() => setShowDeleteConfirm(false)}
-                  className="btn bg-stone-600 hover:bg-stone-700"
-                >
-                  cancel
-                </button>
-                <button
-                  onClick={handleDeleteConfirm}
-                  className="btn bg-red-600 hover:bg-red-700"
-                >
-                  confirm delete
-                </button>
+    <div className="px-8 py-6 w-full max-w-3xl mx-auto bg-white rounded-lg shadow-md overflow-auto">
+      <div className="flex justify-between items-center">
+        <span className="font-light text-gray-600">
+          {props.bookCreatedTime}
+        </span>
+        <div className="flex">
+          {props.keywords &&
+            props.keywords.split(",").map((keyword, i) => (
+              <div key={i} className="text-sm font-medium text-blue-500 mr-2">
+                <FontAwesomeIcon icon={faHashtag}></FontAwesomeIcon>
+                {keyword}
               </div>
-            </div>
-          )}
+            ))}
         </div>
+      </div>
+
+      <div className="mt-2">
+        <h1 className="text-2xl text-gray-700 font-bold hover:text-gray-600">
+          {props.title}
+        </h1>
+        <p className="mt-2 text-gray-600">{props.description}</p>
+      </div>
+
+      <div className="mt-4">
+        <h2 className="text-gray-700 font-semibold">Intro:</h2>
+        <div
+          className="text-gray-600"
+          dangerouslySetInnerHTML={{ __html: bookContent.intro }}
+        ></div>
+
+        <h2 className="text-gray-700 font-semibold mt-4">Preface:</h2>
+        <div
+          className="text-gray-600"
+          dangerouslySetInnerHTML={{ __html: bookContent.preface }}
+        ></div>
+
+        <h2 className="text-gray-700 font-semibold mt-4">Chapters Total:</h2>
+        {bookContent.chapters.map((chapter, index) => (
+          <div key={index}>
+            <div
+              className="text-gray-700 font-semibold"
+              dangerouslySetInnerHTML={{ __html: chapter.title }}
+            ></div>
+            <div
+              className="text-gray-600"
+              dangerouslySetInnerHTML={{ __html: chapter.content }}
+            ></div>
+          </div>
+        ))}
+
+        <h2 className="text-gray-700 font-semibold mt-4">Outro:</h2>
+        <div
+          className="text-gray-600"
+          dangerouslySetInnerHTML={{ __html: bookContent.outro }}
+        ></div>
+      </div>
+
+      <div className="flex justify-between items-center mt-4">
+        {!showDeleteConfirm && (
+          <button
+            className="px-2 py-1 bg-red-500 text-white font-bold rounded hover:bg-red-600"
+            onClick={() => setShowDeleteConfirm(true)}
+          >
+            Delete book
+          </button>
+        )}
+
+        {!!showDeleteConfirm && (
+          <div>
+            <p className="p-2 bg-red-300 text-center">
+              Are you sure you want to delete this book? This action is
+              irreversible.
+            </p>
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                onClick={() => setShowDeleteConfirm(false)}
+                className="px-2 py-1 bg-blue-500 text-white font-bold rounded hover:bg-blue-600"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDeleteConfirm}
+                className="px-2 py-1 bg-red-500 text-white font-bold rounded hover:bg-red-600"
+              >
+                Confirm Delete
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -128,8 +163,9 @@ export const getServerSideProps = withPageAuthRequired({
         id: ctx.params.bookId,
         bookContent: book.bookContent,
         title: book.title,
-        metaDescription: book.metaDescription,
-        keywords: book.keywords,
+        genre: book.genre,
+        description: book.description,
+        // keywords: book.keywords,
         bookCreatedTime: book.created,
         ...appProps,
       },
